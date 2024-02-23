@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+         body {
+            background-color: #f2f2f2;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: #d2daff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: center; 
+            width: 80%; 
+            margin-left: auto; 
+            margin-right: auto;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .result-container {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        button[type="submit"] {
+        background-color: #333;
+        border: none;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 15px; 
+    }
+
+    button[type="submit"]:hover {
+        background-color: #555;
+    }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-bottom: 2px solid #aaa;
+            background-color: transparent;
+            transition: border-bottom-color 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="header">
+        <div class="header-main bg-light-pink"> 
+            <div class="container">
+                <div class="col-md-auto">
+                    <nav class="navbar navbar-expand-lg navbar-light w-100" id="header-navbar">
+                        <a class="navbar-brand font-weight-bold" href="/index">couRses</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/weather/<%= userId %>">Books</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/myCourses">My Courses</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-uppercase" href="#" id="navbarDropdown" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Language
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="/index/en">En</a>
+                                        <a class="dropdown-item" href="/index/kz">Kz</a>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/profile/<%= userId %>">Profile</a>
+                                </li>
+
+                                <%  console.log(isAdmin)
+                                if (isAdmin) { %>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-uppercase" href="/admin/users">Admin page</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </div>
+                    </nav>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container mt-4">
+            <h1>List of Books</h1>
+            <form action="/books" method="POST">
+                <label for="bookTitle">Enter Book Title:</label>
+                <input type="text" id="bookTitle" name="book">
+                <button type="submit">Search</button>
+            </form>
+            <div class="mt-3 result-container" id="weatherResult">
+                <ul style="list-style-type: none; padding: 0;">
+                    <% if (books && books.length > 0) { %>
+                        <% books.forEach(function(book) { %>
+                            <li style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                                <h2><%= book.title %></h2>
+                                <p>Author: <%= book.author %></p>
+                                <p>Publish Date: <%= book.publishDate %></p>
+                            </li>
+                        <% }); %>
+                    <% } else { %>
+                        <li>No books found</li>
+                    <% } %>
+                </ul>
+            </div>
+            
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <p>Zhansaya Musabekova | SE-2206</p>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,180 @@
+<!-- views/course.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+    body {
+        background-color: #f2f2f2;
+        color: #333;
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        background-color: #d2daff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        text-align: center; 
+        width: 80%; 
+        margin-left: auto; 
+        margin-right: auto;
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    .result-container {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    button[type="submit"] {
+    background-color: #333;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px; 
+}
+
+button[type="submit"]:hover {
+    background-color: #555;
+}
+
+    input[type="number"],
+    select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: none;
+        border-bottom: 2px solid #aaa;
+        background-color: transparent;
+        transition: border-bottom-color 0.3s ease;
+    }
+    
+    </style>
+
+<body>
+
+    <section class="header">
+        <div class="header-main bg-light-pink"> 
+            <div class="container">
+                <div class="col-md-auto">
+                    <nav class="navbar navbar-expand-lg navbar-light w-100" id="header-navbar">
+                        <a class="navbar-brand font-weight-bold" href="/index">couRses</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/weather/<%= userId %>">Books</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/myCourses">My Courses</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-uppercase" href="#" id="navbarDropdown" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Language
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="#">English</a>
+                                        <a class="dropdown-item" href="#">Русский</a>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/profile/<%= userId %>">Profile</a>
+                                </li>
+
+                                <% if (isAdmin) { %>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-uppercase" href="/admin/users">Admin page</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </div>
+                    </nav>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <!-- Main content section -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <!-- Carousel -->
+                    <div id="carousel<%= course._id %>" class="carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            <% for (let i = 0; i < course.images.length; i++) { %>
+                                <li data-target="#carousel<%= course._id %>" data-slide-to="<%= i %>" <% if (i === 0) { %>class="active"<% } %>></li>
+                            <% } %>
+                        </ol>
+                        <div class="carousel-inner">
+                            <% course.images.forEach((image, index) => { %>
+                                <div class="carousel-item <% if (index === 0) { %>active<% } %>">
+                                    <img src="/<%= image %>" class="d-block w-100" alt="Course Image">
+                                    <!-- Make sure the path to the image is correct by adding a slash before the image variable -->
+                                </div>
+                            <% }); %>
+                        </div>
+                        <a class="carousel-control-prev" href="#carousel<%= course._id %>" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel<%= course._id %>" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title"><%= course.names[0].name %></h5>
+                        <p class="card-text"><%= course.descriptions[0].description %></p>
+                        <p class="card-text">Duration: <%= course.duration %> hours</p>
+                        <p class="card-text">Price: $<%= course.price %></p>
+                        <p class="card-text">Places: <%= course.places || 'Unlimited' %></p>
+                        <p class="card-text">Category: <%= course.category %></p>
+                        <!-- Display nicely formatted dates -->
+                        <p class="card-text">Start Date: <%= new Date(course.startDate).toLocaleDateString() %></p>
+                        <p class="card-text">End Date: <%= course.endDate ? new Date(course.endDate).toLocaleDateString() : 'N/A' %></p>
+                        <form action="/courses/<%= course._id %>/enroll" method="POST">
+                            <button type="submit" class="btn btn-primary">Enroll</button>
+                        </form>
+                        <a href="/index" class="btn btn-secondary ml-2">Back to All Courses</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Zhansaya Musabekova | SE-2206</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f2f2f2;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+    
+        .container {
+            background-color: #d2daff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: center; 
+            width: 80%; 
+            margin-left: auto; 
+            margin-right: auto;
+        }
+    
+        h1 {
+            color: #333;
+        }
+    
+        .result-container {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        button[type="submit"] {
+            background-color: #333;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 15px; 
+        }
+    
+        button[type="submit"]:hover {
+            background-color: #555;
+        }
+    
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-bottom: 2px solid #aaa;
+            background-color: transparent;
+            transition: border-bottom-color 0.3s ease;
+        }
+        span.admin {
+            color: red;
+            font-weight: bold;
+        }
+        span.user {
+            color: green;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+    </style>
+    
+</head>
+<body>
+    <section class="header">
+        <div class="header-main bg-light-pink"> 
+            <div class="container">
+                <div class="col-md-auto">
+                    <nav class="navbar navbar-expand-lg navbar-light w-100" id="header-navbar">
+                        <a class="navbar-brand font-weight-bold" href="/index">couRses</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/admin/users">Users</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/admin/courses">Courses</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-uppercase" href="#" id="navbarDropdown" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Language
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="#">English</a>
+                                        <a class="dropdown-item" href="#">Русский</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mt-4">
+        <h1>Welcome to the Admin Dashboard</h1>
+
+
+        <div class="container mt-4">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserModal">Add User</button>
+        </div>
+        <h2>Users:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Type</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(user => { %>
+                    <tr>
+                        <td><%= user.username %></td>
+                        <td><%= user.email %></td>
+                        <td>
+                            <% if (user.isAdmin) { %>
+                                <span class="admin">Admin</span>
+                            <% } else { %>
+                                <span class="user">User</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <div >
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateUserModal<%= user._id %>">Update User</button>
+                            </div>
+                            <form method="POST" action="/admin/delete/<%= user._id %>/<%= userId %>">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <!-- Update User Modal -->
+                    <div class="modal fade" id="updateUserModal<%= user._id %>" tabindex="-1" role="dialog" aria-labelledby="updateUserModalLabel<%= user._id %>" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="updateUserModalLabel<%= user._id %>">Update User</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="POST" action="/admin/update/<%= user._id %>">
+                                        <input type="hidden" id="updateUserId" name="updateUserId" value="<%= user._id %>">
+                                        <label for="updateUsername">New Username:</label>
+                                        <input type="text" id="updateUsername" name="username" value="<%= user.username %>"><br>
+                                        <label for="updateEmail">New Email:</label>
+                                        <input type="text" id="updateEmail" name="email" value="<%= user.email %>"><br>
+                                        <label for="updatePassword">New Password:</label>
+                                        <input type="password" id="updatePassword" name="password"><br>
+                                        <button type="submit" class="btn btn-primary">Update User</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                <% }) %>
+            </tbody>
+        </table>
+
+        <!-- Add User Modal -->
+        <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addUserModalLabel">Add User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Form for adding a new user -->
+                        <form method="POST" action="/admin/add/<%= userId %>">
+                            <label for="addUsername">Username:</label>
+                            <input type="text" id="addUsername" name="username" required><br>
+                            <label for="addEmail">Email:</label>
+                            <input type="text" id="addEmail" name="email"><br>
+                            <label for="addPassword">Password:</label>
+                            <input type="password" id="addPassword" name="password" required><br>
+                            <button type="submit" class="btn btn-primary">Add User</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Zhansaya Musabekova | SE-2206</p>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
