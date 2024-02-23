@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podcast Detail</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f2f2f2;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: #d2daff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: center; 
+            width: 80%; 
+            margin-left: auto; 
+            margin-right: auto;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        .no-podcasts {
+            font-size: 1.2rem;
+            color: #888;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <section class="header">
+        <div class="header-main bg-light-pink"> 
+            <div class="container">
+                <div class="col-md-auto">
+                    <nav class="navbar navbar-expand-lg navbar-light w-100" id="header-navbar">
+                        <a class="navbar-brand font-weight-bold" href="/index">couRses</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/books">Books</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/podcasts">Podcasts</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/myCourses">My Courses</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-uppercase" href="#" id="navbarDropdown" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Language
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="/index/en">En</a>
+                                        <a class="dropdown-item" href="/index/kz">Kz</a>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/profile/<%= userId %>">Profile</a>
+                                </li>
+
+                                <%  console.log(isAdmin)
+                                if (isAdmin) { %>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-uppercase" href="/admin/users">Admin page</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </div>
+                    </nav>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h1 class="text-center">All Podcasts</h1>
+        <div class="container">
+            <form action="/podcasts" method="post">
+                <div class="form-group">
+                    <label for="search">Search Podcasts:</label>
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Enter podcast title...">
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+            <div class="row">
+                <% if (podcasts && podcasts.length > 0) { %>
+                    <% podcasts.forEach(podcast => { %>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= podcast.trackName %></h5>
+                                    <p class="card-text">Artist: <%= podcast.artistName %></p>
+                                    <p class="card-text">Genre: <%= podcast.primaryGenreName %></p>
+                                    <img src="<%= podcast.artworkUrl600 %>" class="img-fluid" alt="Podcast Image">
+                                    <p class="card-text">Release Date: <%= new Date(podcast.releaseDate).toDateString() %></p>
+                                    <a href="<%= podcast.collectionViewUrl %>" class="btn btn-primary">View Podcast</a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="container">
+                        <p class="no-podcasts">No podcasts available</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

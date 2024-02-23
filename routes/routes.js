@@ -10,6 +10,9 @@ const User = require('../models/User')
 const Course = require('../models/Course')
 const Enrollment = require('../models/Enrollment')
 const Book = require('../models/Book')
+const Podcasts = require('../models/Podcast')
+
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/') 
@@ -469,28 +472,40 @@ router.post('/books',authenticateUser,  async (req, res) => {
 router.get('/podcasts',authenticateUser, async (req, res)=>{
     try {
         const userId = req.user.userId;
-        res.render('podcast', { userId: userId, isAdmin: req.user.role, books: null }); 
+        res.render('podcast', { userId: userId, isAdmin: req.user.role, podcasts: null }); 
     } catch (error) {
         console.error(error);
         res.status(500).send("Error rendering nutrition page");
     }
 })
 
-app.post('/podcasts', authenticateUser, async (req, res) => {
+
+router.post('/podcasts', authenticateUser, async (req, res) => {
     try {
-        const searchTerm = req.body.title;
+        const search = req.body.search;
 
         const response = await axios.get('https://itunes.apple.com/search', {
             params: {
-                term: searchTerm,
+                term: search,
                 media: 'podcast',
-                limit: 10
+                limit: 4
             }
         });
-
         const podcasts = response.data.results;
+        const savedPodcasts = await Podcasts.create({
+            user: req.user.userId,
+            podcasts: podcasts.map(podcast => ({
+                trackName: podcast.trackName,
+                artistName: podcast.artistName,
+                primaryGenreName: podcast.primaryGenreName,
+                artworkUrl600: podcast.artworkUrl600,
+                releaseDate: podcast.releaseDate,
+                collectionViewUrl: podcast.collectionViewUrl
+            }))
+        });
 
-        res.render('podcastSearchResults', { userId: req.user.userId, isAdmin: req.user.role ,searchTerm, podcasts });
+        console.log(savedPodcasts);
+        res.render('podcast', { userId: req.user.userId, isAdmin: req.user.role, search, podcasts });
     } catch (error) {
         console.error('Error searching podcasts:', error);
         res.status(500).send('Internal Server Error');

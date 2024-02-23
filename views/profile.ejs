@@ -80,7 +80,10 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/weather/<%= userId %>">Books</a>
+                                    <a class="nav-link text-uppercase" href="/books">Books</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" href="/podcasts">Podcasts</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-uppercase" href="/myCourses">My Courses</a>
@@ -91,15 +94,16 @@
                                         Language
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="#">English</a>
-                                        <a class="dropdown-item" href="#">Русский</a>
+                                        <a class="dropdown-item" href="/index/en">En</a>
+                                        <a class="dropdown-item" href="/index/kz">Kz</a>
                                     </div>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-uppercase" href="/profile/<%= userId %>">Profile</a>
                                 </li>
 
-                                <% if (isAdmin) { %>
+                                <%  console.log(isAdmin)
+                                if (isAdmin) { %>
                                     <li class="nav-item">
                                         <a class="nav-link text-uppercase" href="/admin/users">Admin page</a>
                                     </li>
