@@ -55,6 +55,51 @@
             color: #888;
             text-align: center;
         }
+        select[name="language"] {
+    width: auto;
+    padding: 5px 10px;
+    border: 1px solid #d2daff;
+    border-radius: 5px;
+    background-color: #d2daff;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+select[name="language"] {
+    padding: 10px 15px;
+    border: 1px solid #d2daff;
+    border-radius: 5px;
+    background-color: #d2daff;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+select[name="language"]:focus {
+    border-color: #555;
+}
+
+.navbar-nav li.form-inline {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav li.form-inline select[name="language"] {
+    margin-right: 10px;
+}
+@media (max-width: 768px) {
+    .navbar-nav li.form-inline {
+        flex-direction: column;
+    }
+    
+    .navbar-nav li.form-inline select[name="language"] {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+        
     </style>
 </head>
 <body>
@@ -63,7 +108,7 @@
             <div class="container">
                 <div class="col-md-auto">
                     <nav class="navbar navbar-expand-lg navbar-light w-100" id="header-navbar">
-                        <a class="navbar-brand font-weight-bold" href="/index">couRses</a>
+                        <a class="navbar-brand font-weight-bold" href="/index?lang=<%= currentLanguage %>"><%= translation.navbarBrand %></a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
@@ -71,34 +116,29 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/books">Books</a>
+                                    <a class="nav-link text-uppercase" href="/books?lang=<%= currentLanguage %>"><%= translation.navBooks %></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/podcasts">Podcasts</a>
+                                    <a class="nav-link text-uppercase" href="/podcasts?lang=<%= currentLanguage %>"><%= translation.navPodcasts %></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/myCourses">My Courses</a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-uppercase" href="#" id="navbarDropdown" role="button"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Language
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="/index/en">En</a>
-                                        <a class="dropdown-item" href="/index/kz">Kz</a>
-                                    </div>
+                                    <a class="nav-link text-uppercase" href="/myCourses?lang=<%= currentLanguage %>"><%= translation.navMyCourses %></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/profile/<%= userId %>">Profile</a>
+                                    <a class="nav-link text-uppercase" href="/profile?lang=<%= currentLanguage %>"><%= translation.navProfile %></a>
                                 </li>
-
-                                <%  console.log(isAdmin)
-                                if (isAdmin) { %>
+                
+                                <% if (isAdmin) { %>
                                     <li class="nav-item">
-                                        <a class="nav-link text-uppercase" href="/admin/users">Admin page</a>
+                                        <a class="nav-link text-uppercase" href="/admin/users?lang=<%= currentLanguage %>"><%= translation.navAdminPage %></a>
                                     </li>
                                 <% } %>
+                                <form id="language-form" action="/change-language" method="POST">
+                                    <select name="language" onchange="document.getElementById('language-form').submit()">
+                                        <option value="en" <% if(currentLanguage === 'en') { %> selected <% } %>>En</option>
+                                        <option value="kz" <% if(currentLanguage === 'kz') { %> selected <% } %>>Kz</option>
+                                    </select>
+                                </form>
                             </ul>
                         </div>
                     </nav>
@@ -107,44 +147,46 @@
             </div>
         </div>
     </section>
-
     <section>
-        <h1 class="text-center">All Podcasts</h1>
+        <h1 class="text-center"><%= translation.allPodcastsTitle %></h1>
         <div class="container">
-            <form action="/podcasts" method="post">
+            <form action="/podcasts?lang=<%= currentLanguage %>" method="post">
                 <div class="form-group">
-                    <label for="search">Search Podcasts:</label>
-                    <input type="text" class="form-control" id="search" name="search" placeholder="Enter podcast title...">
+                    <label for="search"><%= translation.searchPodcastsLabel %>:</label>
+                    <input type="text" class="form-control" id="search" name="search" placeholder="<%= translation.enterPodcastTitle %>">
                 </div>
-                <button type="submit" class="btn btn-primary">Search</button>
+                <button type="submit" class="btn btn-primary"><%= translation.searchBtn %></button>
             </form>
             <div class="row">
                 <% if (podcasts && podcasts.length > 0) { %>
-                    <% podcasts.forEach(podcast => { %>
-                        <div class="col-md-6">
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <h5 class="card-title"><%= podcast.trackName %></h5>
-                                    <p class="card-text">Artist: <%= podcast.artistName %></p>
-                                    <p class="card-text">Genre: <%= podcast.primaryGenreName %></p>
-                                    <img src="<%= podcast.artworkUrl600 %>" class="img-fluid" alt="Podcast Image">
-                                    <p class="card-text">Release Date: <%= new Date(podcast.releaseDate).toDateString() %></p>
-                                    <a href="<%= podcast.collectionViewUrl %>" class="btn btn-primary">View Podcast</a>
-                                </div>
-                            </div>
+                <% podcasts.forEach(podcast => { %>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= podcast.trackName %></h5>
+                            <p class="card-text"><%= translation.artist %>: <%= podcast.artistName %></p>
+                            <p class="card-text"><%= translation.genre %>: <%= podcast.primaryGenreName %></p>
+                            <img src="<%= podcast.artworkUrl600 %>" class="img-fluid" alt="<%= translation.podcastImageAlt %>">
+                            <p class="card-text"><%= translation.releaseDate %>: <%= new Date(podcast.releaseDate).toDateString() %></p>
+                            <a href="<%= podcast.collectionViewUrl %>" class="btn btn-primary"><%= translation.viewPodcastBtn %></a>
                         </div>
-                    <% }); %>
-                <% } else { %>
-                    <div class="container">
-                        <p class="no-podcasts">No podcasts available</p>
                     </div>
+                </div>
+                <% }); %>
+                <% } else { %>
+                <div class="container">
+                    <p class="no-podcasts"><%= translation.noPodcastsMsg %></p>
+                </div>
                 <% } %>
             </div>
         </div>
     </section>
+    <footer class="footer">
+        <div class="container">
+            <p><%= translation.footerText %></p>
+        </div>
+    </footer>
 
-
-    <!-- Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

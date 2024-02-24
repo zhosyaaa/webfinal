@@ -6,6 +6,7 @@ const path = require('path');
 const routes = require('./routes/routes');
 const cookieParser = require('cookie-parser');
 
+const fs = require('fs');
 
 const app = express();
 const port = 3000;
@@ -14,7 +15,6 @@ app.use('/uploads', express.static('uploads'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 app.use(session({
   secret: 'secret',
   resave: true,
@@ -35,8 +35,22 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
 
+
+function loadTranslation(language) {
+  const translation = fs.readFileSync(`languages/${language}.json`);
+  return JSON.parse(translation);
+}
+app.use((req, res, next) => {
+  const language =  req.query.lang  || 'en';
+  const translation = loadTranslation(language);
+  req.session.language = language; 
+  res.locals.translation = translation;
+  res.locals.currentLanguage = language;
+  next();
+});
+
+app.use('/', routes);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= currentLanguage %>">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Books</title>
+    <title><%= translation.booksTitle %></title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
          body {
@@ -62,16 +62,60 @@
             background-color: transparent;
             transition: border-bottom-color 0.3s ease;
         }
+        select[name="language"] {
+    width: auto;
+    padding: 5px 10px;
+    border: 1px solid #d2daff;
+    border-radius: 5px;
+    background-color: #d2daff;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+select[name="language"] {
+    padding: 10px 15px;
+    border: 1px solid #d2daff;
+    border-radius: 5px;
+    background-color: #d2daff;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+select[name="language"]:focus {
+    border-color: #555;
+}
+
+.navbar-nav li.form-inline {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav li.form-inline select[name="language"] {
+    margin-right: 10px;
+}
+@media (max-width: 768px) {
+    .navbar-nav li.form-inline {
+        flex-direction: column;
+    }
+    
+    .navbar-nav li.form-inline select[name="language"] {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+        
     </style>
 </head>
-
 <body>
     <section class="header">
         <div class="header-main bg-light-pink"> 
             <div class="container">
                 <div class="col-md-auto">
                     <nav class="navbar navbar-expand-lg navbar-light w-100" id="header-navbar">
-                        <a class="navbar-brand font-weight-bold" href="/index">couRses</a>
+                        <a class="navbar-brand font-weight-bold" href="/index?lang=<%= currentLanguage %>"><%= translation.navbarBrand %></a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
@@ -79,34 +123,29 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/books">Books</a>
+                                    <a class="nav-link text-uppercase" href="/books?lang=<%= currentLanguage %>"><%= translation.navBooks %></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/podcasts">Podcasts</a>
+                                    <a class="nav-link text-uppercase" href="/podcasts?lang=<%= currentLanguage %>"><%= translation.navPodcasts %></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/myCourses">My Courses</a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-uppercase" href="#" id="navbarDropdown" role="button"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Language
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="/index/en">En</a>
-                                        <a class="dropdown-item" href="/index/kz">Kz</a>
-                                    </div>
+                                    <a class="nav-link text-uppercase" href="/myCourses?lang=<%= currentLanguage %>"><%= translation.navMyCourses %></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/profile/<%= userId %>">Profile</a>
+                                    <a class="nav-link text-uppercase" href="/profile?lang=<%= currentLanguage %>"><%= translation.navProfile %></a>
                                 </li>
-
-                                <%  console.log(isAdmin)
-                                if (isAdmin) { %>
+                
+                                <% if (isAdmin) { %>
                                     <li class="nav-item">
-                                        <a class="nav-link text-uppercase" href="/admin/users">Admin page</a>
+                                        <a class="nav-link text-uppercase" href="/admin/users?lang=<%= currentLanguage %>"><%= translation.navAdminPage %></a>
                                     </li>
                                 <% } %>
+                                <form id="language-form" action="/change-language" method="POST">
+                                    <select name="language" onchange="document.getElementById('language-form').submit()">
+                                        <option value="en" <% if(currentLanguage === 'en') { %> selected <% } %>>En</option>
+                                        <option value="kz" <% if(currentLanguage === 'kz') { %> selected <% } %>>Kz</option>
+                                    </select>
+                                </form>
                             </ul>
                         </div>
                     </nav>
@@ -115,13 +154,14 @@
             </div>
         </div>
     </section>
+    
     <section>
         <div class="container mt-4">
-            <h1>List of Books</h1>
-            <form action="/books" method="POST">
-                <label for="bookTitle">Enter Book Title:</label>
+            <h1><%= translation.booksListTitle %></h1>
+            <form action="/books?lang=<%= currentLanguage %>" method="POST">
+                <label for="bookTitle"><%= translation.enterBookTitle %>:</label>
                 <input type="text" id="bookTitle" name="book">
-                <button type="submit">Search</button>
+                <button type="submit"><%= translation.searchBtn %></button>
             </form>
             <div class="mt-3 result-container" id="weatherResult">
                 <ul style="list-style-type: none; padding: 0;">
@@ -129,12 +169,12 @@
                         <% books.forEach(function(book) { %>
                             <li style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
                                 <h2><%= book.title %></h2>
-                                <p>Author: <%= book.author %></p>
-                                <p>Publish Date: <%= book.publishDate %></p>
+                                <p><%= translation.author %>: <%= book.author %></p>
+                                <p><%= translation.publishDate %>: <%= book.publishDate %></p>
                             </li>
                         <% }); %>
                     <% } else { %>
-                        <li>No books found</li>
+                        <li><%= translation.noBooksFound %></li>
                     <% } %>
                 </ul>
             </div>
@@ -143,9 +183,10 @@
     </section>
     <footer class="footer">
         <div class="container">
-            <p>Zhansaya Musabekova | SE-2206</p>
+            <p><%= translation.footerText %></p>
         </div>
     </footer>
+
 </body>
 
 </html>

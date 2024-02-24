@@ -77,6 +77,51 @@
             background-color: #f8f9fa;
             font-weight: bold;
         }
+        select[name="language"] {
+    width: auto;
+    padding: 5px 10px;
+    border: 1px solid #d2daff;
+    border-radius: 5px;
+    background-color: #d2daff;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+select[name="language"] {
+    padding: 10px 15px;
+    border: 1px solid #d2daff;
+    border-radius: 5px;
+    background-color: #d2daff;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+select[name="language"]:focus {
+    border-color: #555;
+}
+
+.navbar-nav li.form-inline {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav li.form-inline select[name="language"] {
+    margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+    .navbar-nav li.form-inline {
+        flex-direction: column;
+    }
+    
+    .navbar-nav li.form-inline select[name="language"] {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
     </style>
 </head>
 <body>
@@ -85,7 +130,7 @@
             <div class="container">
                 <div class="col-md-auto">
                     <nav class="navbar navbar-expand-lg navbar-light w-100" id="header-navbar">
-                        <a class="navbar-brand font-weight-bold" href="/index">couRses</a>
+                        <a class="navbar-brand font-weight-bold" href="/index?lang=<%= currentLanguage %>"><%= translation.navbarBrand %></a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
@@ -93,220 +138,200 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/admin/users">Users</a>
+                                    <a class="nav-link text-uppercase" href="/admin/users?lang=<%= currentLanguage %>"><%= translation.usersNav %></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/admin/courses">Courses</a>
+                                    <a class="nav-link text-uppercase" href="/admin/courses?lang=<%= currentLanguage %>"><%= translation.coursesNav %></a>
                                 </li>
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-uppercase" href="#" id="navbarDropdown" role="button"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Language
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="#">English</a>
-                                        <a class="dropdown-item" href="#">Русский</a>
-                                    </div>
+                                    <form id="language-form" action="/change-language" method="POST">
+                                        <select name="language" onchange="this.form.submit()"> 
+                                            <option value="en" <% if(currentLanguage === 'en') { %> selected <% } %>>En</option>
+                                            <option value="kz" <% if(currentLanguage === 'kz') { %> selected <% } %>>Kz</option>
+                                        </select>
+                                    </form>
                                 </li>
                             </ul>
                         </div>
                     </nav>
+                    
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="container mt-4">
-        <h1>Welcome to the Admin Dashboard</h1>
-
+    <div class="container">
+        <h2><%= translation.coursesTitle %>:</h2>
         <div class="container mt-4">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCourseModal">Add Course</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCourseModal"><%= translation.addCourseBtn %></button>
         </div>
-
-        <h2>Courses:</h2>
-        <div class="table-responsive">
-            <table>
-                <thead>
+        <h3><%= translation.courseSectionTitle %></h3>
+        <div class=" table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th><%= translation.name %></th>
+                    <th><%= translation.description %></th>
+                    <th><%= translation.duration %></th>
+                    <th><%= translation.price %></th>
+                    <th><%= translation.places %></th>
+                    <th><%= translation.category %></th>
+                    <th><%= translation.startDate %></th>
+                    <th><%= translation.endDate %></th>
+                    <th><%= translation.actions %></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% courses.forEach(course => { %>
                     <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Duration (hours)</th>
-                        <th>Price ($)</th>
-                        <th>Places</th>
-                        <th>Category</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Actions</th>
+                        <td>
+                            <% if (currentLanguage === 'en') { %>
+                                <h5 class="card-title"><%= course.names[0].name %></h5>
+                            <% } else if (currentLanguage === 'kz') { %>
+                                <h5 class="card-title"><%= course.names[1].name %></h5>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (currentLanguage === 'en') { %>
+                                <p class="card-text"><%= course.descriptions[0].description %></p>
+                            <% } else if (currentLanguage === 'kz') { %>
+                                <p class="card-text"><%= course.descriptions[1].description %></p>
+                            <% } %>
+                        </td>
+                        
+                        <td><%= course.duration %></td>
+                        <td><%= course.price %></td>
+                        <td><%= course.places %></td>
+                        <td><%= course.category %></td>
+                        <td><%= course.startDate.toISOString().split('T')[0] %></td>
+                        <td><%= course.endDate ? course.endDate.toISOString().split('T')[0] : 'N/A' %></td>
+                        <td>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateCourseModal<%= course._id %>">
+                                <%= translation.updateBtn %>
+                            </button>
+
+                            <form method="POST" action="/admin/courses/delete/<%= course._id %>?lang=<%= currentLanguage %>">
+                                <button type="submit"><%= translation.deleteBtn %></button>
+                            </form>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    <% courses.forEach(course => { %>
-                        <tr>
-                            <td><%= course.names.find(name => name.language === 'english').name %></td>
-                            <td><%= course.descriptions.find(description => description.language === 'english').description %></td>
-                            <td><%= course.duration %></td>
-                            <td><%= course.price %></td>
-                            <td><%= course.places %></td>
-                            <td><%= course.category %></td>
-                            <td><%= course.startDate.toISOString().split('T')[0] %></td>
-                            <td><%= course.endDate ? course.endDate.toISOString().split('T')[0] : 'N/A' %></td>
-                            <td>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateCourseModal<%= course._id %>">
-                                    Update
-                                </button>
-
-                                <form method="POST" action="/admin/courses/delete/<%= course._id %>">
-                                    <button type="submit">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        </div>
+                <% }) %>
+            </tbody>
+        </table>
     </div>
-
-    <!-- Add Course Modal -->
-    <div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="addCourseModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addCourseModalLabel">Add Course</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="addCourseForm" method="POST" action="/admin/courses" enctype="multipart/form-data">
-                        <!-- Form fields for adding a new course -->
-                        <!-- Name (English) -->
-                        <label for="addNameEnglish">Name (English):</label>
-                        <input type="text" id="addNameEnglish" name="names[0][language]" value="english" style="display: none;">
-                        <input type="text" id="addNameEnglish" name="names[0][name]" placeholder="Enter English name" required>
-                        <br>
-                        <!-- Name (Kazakh) -->
-                        <label for="addNameKazakh">Name (Kazakh):</label>
-                        <input type="text" id="addNameKazakh" name="names[1][language]" value="kazakh" style="display: none;">
-                        <input type="text" id="addNameKazakh" name="names[1][name]" placeholder="Enter Kazakh name" required>
-                        <br>
-                        <!-- Description (English) -->
-                        <label for="addDescriptionEnglish">Description (English):</label>
-                        <textarea id="addDescriptionEnglish" name="descriptions[0][language]" style="display: none;">english</textarea>
-                        <textarea id="addDescriptionEnglish" name="descriptions[0][description]" placeholder="Enter English description" required></textarea>
-                        <br>
-                        <!-- Description (Kazakh) -->
-                        <label for="addDescriptionKazakh">Description (Kazakh):</label>
-                        <textarea id="addDescriptionKazakh" name="descriptions[1][language]" style="display: none;">kazakh</textarea>
-                        <textarea id="addDescriptionKazakh" name="descriptions[1][description]" placeholder="Enter Kazakh description" required></textarea>
-                        <br>
-                        <!-- Duration (hours) -->
-                        <label for="addDuration">Duration (hours):</label>
-                        <input type="number" id="addDuration" name="duration" required>
-                        <br>
-                        <!-- Price ($) -->
-                        <label for="addPrice">Price ($):</label>
-                        <input type="number" id="addPrice" name="price" required>
-                        <br>
-                        <!-- Places -->
-                        <label for="addPlaces">Places:</label>
-                        <input type="number" id="addPlaces" name="places">
-                        <br>
-                        <!-- Category -->
-                        <label for="addCategory">Category:</label>
-                        <input type="text" id="addCategory" name="category" required>
-                        <br>
-                        <!-- Start Date -->
-                        <label for="addStartDate">Start Date:</label>
-                        <input type="date" id="addStartDate" name="startDate" required>
-                        <br>
-                        <!-- End Date -->
-                        <label for="addEndDate">End Date:</label>
-                        <input type="date" id="addEndDate" name="endDate">
-                        <br>
-                        <!-- Images -->
-                        <label for="addImage1">Image 1:</label>
-                        <input type="file" id="addImage1" name="images[]" accept="image/*" required>
-                        <br>
-                        <label for="addImage2">Image 2:</label>
-                        <input type="file" id="addImage2" name="images[]" accept="image/*" required>
-                        <br>
-                        <label for="addImage3">Image 3:</label>
-                        <input type="file" id="addImage3" name="images[]" accept="image/*" required>
-                        <br>
-                        <!-- Submit Button -->
-                        <button type="submit" class="btn btn-primary">Add Course</button>
-                    </form>
-                </div>
+</div>
+</div>
+    
+<div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="addCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCourseModalLabel"><%= translation.addModalTitle %></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addCourseForm" method="POST" action="/admin/courses?lang=<%= currentLanguage %>" enctype="multipart/form-data">
+                    <label for="addNameEnglish"><%= translation.nameEnglish %>:</label>
+                    <input type="text" id="addNameEnglish" name="names[0][language]" value="english" style="display: none;">
+                    <input type="text" id="addNameEnglish" name="names[0][name]" placeholder="<%= translation.enterEnglishName %>" required>
+                    <br>
+                    <label for="addNameKazakh"><%= translation.nameKazakh %>:</label>
+                    <input type="text" id="addNameKazakh" name="names[1][language]" value="kazakh" style="display: none;">
+                    <input type="text" id="addNameKazakh" name="names[1][name]" placeholder="<%= translation.enterKazakhName %>" required>
+                    <br>
+                    <label for="addDescriptionEnglish"><%= translation.descriptionEnglish %>:</label>
+                    <textarea id="addDescriptionEnglish" name="descriptions[0][language]" style="display: none;"><%= translation.english %></textarea>
+                    <textarea id="addDescriptionEnglish" name="descriptions[0][description]" placeholder="<%= translation.enterEnglishDescription %>" required></textarea>
+                    <br>
+                    <label for="addDescriptionKazakh"><%= translation.descriptionKazakh %>:</label>
+                    <textarea id="addDescriptionKazakh" name="descriptions[1][language]" style="display: none;"><%= translation.kazakh %></textarea>
+                    <textarea id="addDescriptionKazakh" name="descriptions[1][description]" placeholder="<%= translation.enterKazakhDescription %>" required></textarea>
+                    <br>
+                    <label for="addDuration"><%= translation.durationHours %>:</label>
+                    <input type="number" id="addDuration" name="duration" required>
+                    <br>
+                    <label for="addPrice"><%= translation.priceDollars %>:</label>
+                    <input type="number" id="addPrice" name="price" required>
+                    <br>
+                    <label for="addPlaces"><%= translation.places %>:</label>
+                    <input type="number" id="addPlaces" name="places">
+                    <br>
+                    <label for="addCategory"><%= translation.category %>:</label>
+                    <input type="text" id="addCategory" name="category" required>
+                    <br>
+                    <label for="addStartDate"><%= translation.startDate %>:</label>
+                    <input type="date" id="addStartDate" name="startDate" required>
+                    <br>
+                    <label for="addEndDate"><%= translation.endDate %>:</label>
+                    <input type="date" id="addEndDate" name="endDate">
+                    <br>
+                    <label for="addImage1"><%= translation.image1 %>:</label>
+                    <input type="file" id="addImage1" name="images[]" accept="image/*" required>
+                    <br>
+                    <label for="addImage2"><%= translation.image2 %>:</label>
+                    <input type="file" id="addImage2" name="images[]" accept="image/*" required>
+                    <br>
+                    <label for="addImage3"><%= translation.image3 %>:</label>
+                    <input type="file" id="addImage3" name="images[]" accept="image/*" required>
+                    <br>
+                    <button type="submit" class="btn btn-primary"><%= translation.addCourseBtn %></button>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-   <!-- Update Course Modal -->
 <% courses.forEach(course => { %>
     <div class="modal fade" id="updateCourseModal<%= course._id %>" tabindex="-1" role="dialog" aria-labelledby="updateCourseModalLabel<%= course._id %>" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="updateCourseModalLabel<%= course._id %>">Update Course</h5>
+                    <h5 class="modal-title" id="updateCourseModalLabel<%= course._id %>"><%= translation.modalTitle %></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/admin/courses/update/<%= course._id %>" >
-                        <!-- Form fields for updating a course -->
-                        <!-- Name (English) -->
-                        <label for="updateNameEnglish<%= course._id %>">Name (English):</label>
+                    <form method="POST" action="/admin/courses/update/<%= course._id %>?lang=<%= currentLanguage %>" >
+                        <label for="updateNameEnglish<%= course._id %>"><%= translation.nameEnglish %>:</label>
                         <input type="text" id="updateNameEnglish<%= course._id %>" name="names[0][language]" value="english" style="display: none;">
-                        <input type="text" id="updateNameEnglishValue<%= course._id %>" name="names[0][name]" placeholder="Enter English name" value="<%= course.names.find(name => name.language === 'english') ? course.names.find(name => name.language === 'english').name : '' %>">
+                        <input type="text" id="updateNameEnglishValue<%= course._id %>" name="names[0][name]" placeholder="<%= translation.enterEnglishName %>" value="<%= course.names.find(name => name.language === 'english') ? course.names.find(name => name.language === 'english').name : '' %>">
                         <br>
-                        <!-- Name (Kazakh) -->
-                        <label for="updateNameKazakh<%= course._id %>">Name (Kazakh):</label>
+                        <label for="updateNameKazakh<%= course._id %>"><%= translation.nameKazakh %>:</label>
                         <input type="text" id="updateNameKazakh<%= course._id %>" name="names[1][language]" value="kazakh" style="display: none;">
-                        <input type="text" id="updateNameKazakhValue<%= course._id %>" name="names[1][name]" placeholder="Enter Kazakh name" value="<%= course.names.find(name => name.language === 'kazakh') ? course.names.find(name => name.language === 'kazakh').name : '' %>">
+                        <input type="text" id="updateNameKazakhValue<%= course._id %>" name="names[1][name]" placeholder="<%= translation.enterKazakhName %>" value="<%= course.names.find(name => name.language === 'kazakh') ? course.names.find(name => name.language === 'kazakh').name : '' %>">
                         <br>
-                        <!-- Description (English) -->
-                        <label for="updateDescriptionEnglish<%= course._id %>">Description (English):</label>
-                        <textarea id="updateDescriptionEnglish<%= course._id %>" name="descriptions[0][language]" style="display: none;">english</textarea>
-                        <textarea id="updateDescriptionEnglishValue<%= course._id %>" name="descriptions[0][description]" placeholder="Enter English description" ><%= course.descriptions.find(description => description.language === 'english') ? course.descriptions.find(description => description.language === 'english').description : '' %></textarea>
+                        <label for="updateDescriptionEnglish<%= course._id %>"><%= translation.descriptionEnglish %>:</label>
+                        <textarea id="updateDescriptionEnglish<%= course._id %>" name="descriptions[0][language]" style="display: none;"><%= translation.english %></textarea>
+                        <textarea id="updateDescriptionEnglishValue<%= course._id %>" name="descriptions[0][description]" placeholder="<%= translation.enterEnglishDescription %>" ><%= course.descriptions.find(description => description.language === 'english') ? course.descriptions.find(description => description.language === 'english').description : '' %></textarea>
                         <br>
-                        <!-- Description (Kazakh) -->
-                        <label for="updateDescriptionKazakh<%= course._id %>">Description (Kazakh):</label>
-                        <textarea id="updateDescriptionKazakh<%= course._id %>" name="descriptions[1][language]" style="display: none;">kazakh</textarea>
-                        <textarea id="updateDescriptionKazakhValue<%= course._id %>" name="descriptions[1][description]" placeholder="Enter Kazakh description" ><%= course.descriptions.find(description => description.language === 'kazakh') ? course.descriptions.find(description => description.language === 'kazakh').description : '' %></textarea>
+                        <label for="updateDescriptionKazakh<%= course._id %>"><%= translation.descriptionKazakh %>:</label>
+                        <textarea id="updateDescriptionKazakh<%= course._id %>" name="descriptions[1][language]" style="display: none;"><%= translation.kazakh %></textarea>
+                        <textarea id="updateDescriptionKazakhValue<%= course._id %>" name="descriptions[1][description]" placeholder="<%= translation.enterKazakhDescription %>" ><%= course.descriptions.find(description => description.language === 'kazakh') ? course.descriptions.find(description => description.language === 'kazakh').description : '' %></textarea>
                         <br>
-                        <!-- Duration (hours) -->
-                        <label for="updateDuration<%= course._id %>">Duration (hours):</label>
+                        <label for="updateDuration<%= course._id %>"><%= translation.durationHours %>:</label>
                         <input type="number" id="updateDuration<%= course._id %>" name="duration" value="<%= course.duration %>">
                         <br>
-                        <!-- Price ($) -->
-                        <label for="updatePrice<%= course._id %>">Price ($):</label>
+                        <label for="updatePrice<%= course._id %>"><%= translation.priceDollars %>:</label>
                         <input type="number" id="updatePrice<%= course._id %>" name="price" value="<%= course.price %>">
                         <br>
-                        <!-- Places -->
-                        <label for="updatePlaces<%= course._id %>">Places:</label>
+                        <label for="updatePlaces<%= course._id %>"><%= translation.places %>:</label>
                         <input type="number" id="updatePlaces<%= course._id %>" name="places" value="<%= course.places %>">
                         <br>
-                        <!-- Category -->
-                        <label for="updateCategory<%= course._id %>">Category:</label>
+                        <label for="updateCategory<%= course._id %>"><%= translation.category %>:</label>
                         <input type="text" id="updateCategory<%= course._id %>" name="category" value="<%= course.category %>">
                         <br>
-                        <!-- Start Date -->
-                        <label for="updateStartDate<%= course._id %>">Start Date:</label>
+                        <label for="updateStartDate<%= course._id %>"><%= translation.startDate %>:</label>
                         <input type="date" id="updateStartDate<%= course._id %>" name="startDate" value="<%= course.startDate.toISOString().split('T')[0] %>">
                         <br>
-                        <!-- End Date -->
-                        <label for="updateEndDate<%= course._id %>">End Date:</label>
+                        <label for="updateEndDate<%= course._id %>"><%= translation.endDate %>:</label>
                         <input type="date" id="updateEndDate<%= course._id %>" name="endDate" value="<%= course.endDate ? course.endDate.toISOString().split('T')[0] : '' %>">
                         <br>
-                        <!-- Images -->
-                        <!-- Here you can decide whether you want to display the current images or leave it empty for updating -->
-                        <br>
-                        <!-- Course ID -->
                         <input type="hidden" name="course_id" value="<%= course._id %>">
                         <br>
-                        <!-- Submit Button -->
-                        <button type="submit" class="btn btn-primary">Update Course</button>
+                        <button type="submit" class="btn btn-primary"><%= translation.updateCourseBtn %></button>
                     </form>
                 </div>
             </div>
@@ -316,7 +341,7 @@
 
 <footer class="footer">
     <div class="container">
-        <p>Zhansaya Musabekova | SE-2206</p>
+        <p><%= translation.footerText %></p>
     </div>
 </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

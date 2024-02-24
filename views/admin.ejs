@@ -82,6 +82,51 @@
             background-color: #f8f9fa;
             font-weight: bold;
         }
+        select[name="language"] {
+    width: auto;
+    padding: 5px 10px;
+    border: 1px solid #d2daff;
+    border-radius: 5px;
+    background-color: #d2daff;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+select[name="language"] {
+    padding: 10px 15px;
+    border: 1px solid #d2daff;
+    border-radius: 5px;
+    background-color: #d2daff;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+select[name="language"]:focus {
+    border-color: #555;
+}
+
+.navbar-nav li.form-inline {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav li.form-inline select[name="language"] {
+    margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+    .navbar-nav li.form-inline {
+        flex-direction: column;
+    }
+    
+    .navbar-nav li.form-inline select[name="language"] {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
     </style>
     
 </head>
@@ -91,7 +136,7 @@
             <div class="container">
                 <div class="col-md-auto">
                     <nav class="navbar navbar-expand-lg navbar-light w-100" id="header-navbar">
-                        <a class="navbar-brand font-weight-bold" href="/index">couRses</a>
+                        <a class="navbar-brand font-weight-bold" href="/index?lang=<%= currentLanguage %>"><%= translation.navbarBrand %></a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
@@ -99,20 +144,18 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/admin/users">Users</a>
+                                    <a class="nav-link text-uppercase" href="/admin/users?lang=<%= currentLanguage %>"><%= translation.usersNav %></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-uppercase" href="/admin/courses">Courses</a>
+                                    <a class="nav-link text-uppercase" href="/admin/courses?lang=<%= currentLanguage %>"><%= translation.coursesNav %></a>
                                 </li>
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-uppercase" href="#" id="navbarDropdown" role="button"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Language
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="#">English</a>
-                                        <a class="dropdown-item" href="#">Русский</a>
-                                    </div>
+                                    <form id="language-form" action="/change-language" method="POST">
+                                        <select name="language" onchange="this.form.submit()"> <
+                                            <option value="en" <% if(currentLanguage === 'en') { %> selected <% } %>>En</option>
+                                            <option value="kz" <% if(currentLanguage === 'kz') { %> selected <% } %>>Kz</option>
+                                        </select>
+                                    </form>
                                 </li>
                             </ul>
                         </div>
@@ -124,20 +167,20 @@
     </section>
 
     <div class="container mt-4">
-        <h1>Welcome to the Admin Dashboard</h1>
+        <h1><%= translation.adminDashboardTitle %></h1>
 
 
         <div class="container mt-4">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserModal">Add User</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserModal"><%= translation.addUserBtn %></button>
         </div>
-        <h2>Users:</h2>
+        <h2><%= translation.usersListTitle %>:</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Type</th>
-                    <th>Action</th>
+                    <th><%= translation.username %></th>
+                    <th><%= translation.email %></th>
+                    <th><%= translation.type %></th>
+                    <th><%= translation.action %></th>
                 </tr>
             </thead>
             <tbody>
@@ -147,40 +190,39 @@
                         <td><%= user.email %></td>
                         <td>
                             <% if (user.isAdmin) { %>
-                                <span class="admin">Admin</span>
+                                <span class="admin"><%= translation.adminType %></span>
                             <% } else { %>
-                                <span class="user">User</span>
+                                <span class="user"><%= translation.userType %></span>
                             <% } %>
                         </td>
                         <td>
                             <div >
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateUserModal<%= user._id %>">Update User</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateUserModal<%= user._id %>"><%= translation.updateUserBtn %></button>
                             </div>
-                            <form method="POST" action="/admin/delete/<%= user._id %>/<%= userId %>">
-                                <button type="submit">Delete</button>
+                            <form method="POST" action="/admin/delete/<%= user._id %>/<%= userId %>?lang=<%= currentLanguage %>">
+                                <button type="submit"><%= translation.deleteBtn %></button>
                             </form>
                         </td>
                     </tr>
-                    <!-- Update User Modal -->
                     <div class="modal fade" id="updateUserModal<%= user._id %>" tabindex="-1" role="dialog" aria-labelledby="updateUserModalLabel<%= user._id %>" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="updateUserModalLabel<%= user._id %>">Update User</h5>
+                                    <h5 class="modal-title" id="updateUserModalLabel<%= user._id %>"><%= translation.updateUserBtn %></h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form method="POST" action="/admin/update/<%= user._id %>">
+                                    <form method="POST" action="/admin/update/<%= user._id %>?lang=<%= currentLanguage %>">
                                         <input type="hidden" id="updateUserId" name="updateUserId" value="<%= user._id %>">
-                                        <label for="updateUsername">New Username:</label>
+                                        <label for="updateUsername"><%= translation.username %>:</label>
                                         <input type="text" id="updateUsername" name="username" value="<%= user.username %>"><br>
-                                        <label for="updateEmail">New Email:</label>
+                                        <label for="updateEmail"><%= translation.email %>:</label>
                                         <input type="text" id="updateEmail" name="email" value="<%= user.email %>"><br>
-                                        <label for="updatePassword">New Password:</label>
+                                        <label for="updatePassword"><%= translation.password %>:</label>
                                         <input type="password" id="updatePassword" name="password"><br>
-                                        <button type="submit" class="btn btn-primary">Update User</button>
+                                        <button type="submit" class="btn btn-primary"><%= translation.updateUserBtn %></button>
                                     </form>
                                 </div>
                             </div>
@@ -190,37 +232,34 @@
                 <% }) %>
             </tbody>
         </table>
-
-        <!-- Add User Modal -->
         <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addUserModalLabel">Add User</h5>
+                        <h5 class="modal-title" id="addUserModalLabel"><%= translation.addUserModalTitle %></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <!-- Form for adding a new user -->
-                        <form method="POST" action="/admin/add/<%= userId %>">
-                            <label for="addUsername">Username:</label>
+                        <form method="POST" action="/admin/add/<%= userId %>?lang=<%= currentLanguage %>">
+                            <label for="addUsername"><%= translation.username %>:</label>
                             <input type="text" id="addUsername" name="username" required><br>
-                            <label for="addEmail">Email:</label>
+                            <label for="addEmail"><%= translation.email %>:</label>
                             <input type="text" id="addEmail" name="email"><br>
-                            <label for="addPassword">Password:</label>
+                            <label for="addPassword"><%= translation.password %>:</label>
                             <input type="password" id="addPassword" name="password" required><br>
-                            <button type="submit" class="btn btn-primary">Add User</button>
+                            <button type="submit" class="btn btn-primary"><%= translation.addUserBtn %></button>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>        
-    </div>
+        </div>
 
+    </div>
     <footer class="footer">
         <div class="container">
-            <p>Zhansaya Musabekova | SE-2206</p>
+            <p><%= translation.footerText %></p>
         </div>
     </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
