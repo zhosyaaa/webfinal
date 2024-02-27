@@ -6,22 +6,22 @@ The Course Management Hub API offers a comprehensive suite of endpoints tailored
 ## Installation
 
 1. Clone the repository to your local machine:
+    
+    ```bash
+        git clone https://github.com/Poullsonn/Assik4-Final.git
 
-\`\`\`
-git clone https://github.com/Poullsonn/Assik4-Final.git
-\`\`\`
 
 2. Install dependencies:
 
-\`\`\`
-npm install
-\`\`\`
+    ```bash
+    npm install
+
 
 3. Start the application:
 
-\`\`\`
-nodemon app.js
-\`\`\`
+    ```bash
+    nodemon app.js
+
 
 The application will be available at http://localhost:3000/.
 
