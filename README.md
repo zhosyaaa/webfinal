@@ -82,6 +82,7 @@ The project structure is organized as follows:
 - **package.json**: File containing project metadata and dependencies.
 - **README.md**: Documentation file providing an overview of the project.
 
+```
 course-management-system/
 │
 ├── routes/
@@ -114,3 +115,4 @@ course-management-system/
 ├── app.js
 ├── package.json
 └── README.md
+```
